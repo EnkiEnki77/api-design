@@ -10,15 +10,33 @@ import {Router} from 'express'
 
 const router = Router()
 
-//the app is the main api, these routes are just a sub branch, so you need to reattach them to app.     
+//the app is the main api, these routes are just a sub branch, so you need to reattach them to app.  
+
+//middleware are functions that run right before your route handlers run. They can do things like authenticate, log, augment the 
+//request, handle errors, etc. They look exactly like middleware except for one difference, because there can be a list of 
+//middleware, you need a way to move into the next middleware when work is done in the current. Looks like this:
+
+const middleWare = (req, res, next) => {
+
+    //this tells express work is done and its time to move on to the next middleware or a handler. 
+    next()
+}
 
 // Product
 
-router.get('/product', (req, res) => {})
+//you can add middleware to specific  route
+router.get('/product', (req, res, next) => {
+    req.shh = 'secrettttt'
+    next()
+}, (req, res) => {
+    res.json({message: req.shh + ' ' + req.hello})
+})
 
 router.get('/product/:id', (req, res) => {})
 
-router.post('/product', (req, res) => {})
+router.post('/product', (req, res) => {
+
+})
 
 router.put('/product/:id', (req, res) => {})
 
@@ -38,7 +56,9 @@ router.delete('/update/:id', (req, res) => {})
 
 // Update Point
 
-router.get('/updatepoint', (req, res) => {})
+router.get('/updatepoint', (req, res) => {
+    res.json({message: 'hello from update point'})
+})
 
 router.get('/updatepoint/:id', (req, res) => {})
 

@@ -37,8 +37,39 @@
 
 import express from 'express'
 import router from './router'
+import morgan from 'morgan'
 
 const app = express()
+
+//middleware should always be at the top of your server if you want it to come before all your handlers. You also dont need a 
+//mount path for most middleware, this attaches it to the entire app. mount paths are mostly used for routers. 
+//order of things matter in your server, this is because when next is called from a middleware it goes to whatever is next in
+// the call stack. That is dependent on what the request was. If it was /api/product, that would be next for example. 
+app.use(morgan('dev'))
+
+//allows a client to send json to the server
+app.use(express.json())
+
+//allows a client to add a query string or param and express will properly decode it, otherwise it would just be treated like a 
+//string
+app.use(express.urlencoded({extended: true}))
+
+//you can create your own middleware, in this example it augments the req object, and any handlers that come after it now have 
+//asccess to that augmentation.
+app.use((req, res, next) => {
+    req.shh_secret = 'secret'
+
+    next()
+})
+
+//to create middleware with special configuration return a function from a function, passing the config to the first function.
+
+const consoleLogger = (message) => (req, res, next) => {
+    req.hello = `Hello from ${message}`
+    next()
+}
+
+app.use(consoleLogger('console logger'))
 
 //attaches your router api branch back to app, none of the routes in the router will work unless /api is put first though, because
 //that is how the branch is configured in app.use in this instance. 
