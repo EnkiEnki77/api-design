@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import * as bcrypt from 'bcrypt'
 
 
 //its important that not just anyone be allowed to use our api. we need to be able to tell what user is making the request, so 
@@ -22,6 +23,9 @@ export const createJWT = (user) => {
  //you should create a middleware that protects certain routes if a user doesnt have a jwt. 
 
  export const protect = (req, res, next) => {
+    //headers are key values and are another configuration option for your requests. Its like the meta data of an html file. 
+    //its not the actual data sent through the request, but is data about the request. Bearer tokens are generally passed through
+    //the authorization header. 
     const bearer = req.headers.authorization 
 
     //This checks that a bearer token is passed in the headers
@@ -57,4 +61,16 @@ export const createJWT = (user) => {
         res.json({message: 'not valid token.'})
         return 
     }
+ }
+
+ //takes in a string password from the client and compares it to the hashed password on the db
+ export const comparePassword = (password: string, hash: string) => {
+    //returns a promise that resolves to true or false
+    return bcrypt.compare(password, hash)
+ }
+
+ //hashes password so that users sensitive data is not at risk, and then stores hashed password on the db.
+ export const hashedPassword = (password: string) => {
+    //you should always add a slat to your hash, this makes it harder to guess. 
+   return bcrypt.hash(password, 5)
  }
