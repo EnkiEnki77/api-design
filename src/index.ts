@@ -11,6 +11,9 @@
 // server.listen(port, () => { return `Server listening on ${port}`})
 
 import app  from './server'
+//you have to do this to make your secrets accessible to the entirety of your server.
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 const port = 8000
 

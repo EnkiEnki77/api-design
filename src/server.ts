@@ -38,8 +38,16 @@
 import express from 'express'
 import router from './router'
 import morgan from 'morgan'
+import cors from 'cors'
+import { protect } from './modules/auth'
 
 const app = express()
+
+//middleware allows you to change the config of your server. 
+
+//determines what ip addresses can access the api, this config allows all. its basically a preflightcheck, not the same as 
+//authentication
+app.use(cors())
 
 //middleware should always be at the top of your server if you want it to come before all your handlers. You also dont need a 
 //mount path for most middleware, this attaches it to the entire app. mount paths are mostly used for routers. 
@@ -75,6 +83,6 @@ app.use(consoleLogger('console logger'))
 //that is how the branch is configured in app.use in this instance. 
 //app.use allows you to add some sort of configuration either to the whole app, or to a specific api branch such as below. It is
 //also used to connect middleware to your app.
-app.use('/api', router)
+app.use('/api', protect, router)
 
 export default app

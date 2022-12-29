@@ -19,8 +19,9 @@ const router = Router()
 const middleWare = (req, res, next) => {
 
     //this tells express work is done and its time to move on to the next middleware or a handler. 
-    next()
-}
+    next()}
+
+   
 
 // Product
 
