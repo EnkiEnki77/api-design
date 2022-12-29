@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+//this is where we will write the schema for our db
+
+//It is helpful to base the schema/models for your data off of a ui design. 
+
+//the first time interacting with the db you have to run initial migration to get the db and schema in sync. Any you will contine
+//to run migrations any time you make changes to the schema. You need to install prisma/client which is the sdk for communicating to
+//the db. the command for migration is npx prisma migrate dev --name init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//this is how you define schema models in prisma
+model User {
+  //here we are defining the name of the field, its type, the directive, and what it defaults to, in this case a uuid
+  //which returns a unique string.
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  username  String    @unique
+  password  String
+  products  Product[]
+}
+
+model Product {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  name      String   @db.VarChar(255)
+
+  // you need a product model to belong to a user, so you need to set up a relationship. Think about whether its a one to one, 
+  // one to many, or many to many relationship. Setup the relationship for the submodel like this, then go in the terminal, and
+  // type npx prisma format to automatically create the relationship on the parent model. 
+  belongsToId String
+  belongsTo   User     @relation(fields: [belongsToId], references: [id])
+  updates     Update[]
+}
+
+enum UPDATE_STATUS {
+  IN_PROGRESS
+  SHIPPED
+  DEPRECATED
+}
+
+model Update {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  title   String
+  status  UPDATE_STATUS @default(IN_PROGRESS)
+  version String?
+  asset   String?
+
+  productId    String
+  product      Product       @relation(fields: [productId], references: [id])
+  updatePoints UpdatePoint[]
+}
+
+model UpdatePoint {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  name        String @db.VarChar(255)
+  description String
+
+  updateId String
+  update   Update @relation(fields: [updateId], references: [id])
+}
