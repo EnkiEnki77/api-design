@@ -36,10 +36,12 @@
 
 
 import express from 'express'
-import router from './router'
+import productRouter from './routes/productRouter'
+import userRouter from './routes/userRouter'
 import morgan from 'morgan'
 import cors from 'cors'
 import { protect } from './modules/auth'
+import { createUser, signIn } from './handlers/user'
 
 const app = express()
 
@@ -83,6 +85,10 @@ app.use(consoleLogger('console logger'))
 //that is how the branch is configured in app.use in this instance. 
 //app.use allows you to add some sort of configuration either to the whole app, or to a specific api branch such as below. It is
 //also used to connect middleware to your app.
-app.use('/api', protect, router)
+app.use('/api', protect, productRouter)
+
+app.use('/register', createUser)
+
+app.use('/signin', signIn)
 
 export default app
