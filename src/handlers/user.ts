@@ -4,6 +4,12 @@ import { comparePassword, createJWT, hashedPassword } from "../modules/auth";
 // you dont want your handlers to think about any sort of auth or validation, middlewaare should handle this before 
 //the handlers even run. 
 
+//install express-validator for validations. 
+
+//when creating a validator think about what you would and wouldnt allow a user to update on your database by looking at your models.
+
+
+
 //all routes that query a db need to be asynce
 export const createUser = async (req, res) => {
     const user = await prisma.user.create({

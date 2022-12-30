@@ -87,8 +87,6 @@ app.use(consoleLogger('console logger'))
 //also used to connect middleware to your app.
 app.use('/api', protect, productRouter)
 
-app.use('/register', createUser)
-
-app.use('/signin', signIn)
+app.use(userRouter)
 
 export default app

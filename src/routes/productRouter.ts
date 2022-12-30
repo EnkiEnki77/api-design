@@ -7,6 +7,7 @@
 //be more general. 
 
 import {Router} from 'express'
+import {body, validationResult} from 'express-validator'
 
 const router = Router()
 
@@ -35,11 +36,31 @@ router.get('/product', (req, res, next) => {
 
 router.get('/product/:id', (req, res) => {})
 
-router.post('/product', (req, res) => {
+//the body middleware is saying req.body should have a property called name. Its enhancing the req object, so that when you 
+//pass it to validationResult it knows what validations to be checking for. 
+router.post('/product', body('name').isString(), (req, res) => {
+    const errors = validationResult(req)
 
+    if(!errors.isEmpty()){
+        res.status(400)
+        res.json({errors: errors.array()})
+        return
+    }
+
+    res.json({message: "product created."})
 })
 
-router.put('/product/:id', (req, res) => {})
+router.put('/product/:id', body('name').isString(), (req, res) => {
+    const errors = validationResult(req)
+
+    if(!errors.isEmpty()){
+        res.status(400)
+        res.json({errors: errors.array()})
+        return
+    }
+
+    res.json({message: "product updated."})
+})
 
 router.delete('/product/:id', (req, res) => {})
 
