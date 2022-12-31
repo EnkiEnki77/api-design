@@ -29,9 +29,14 @@ export const getProducts = async (req, res) => {
 }
 
 export const getOneProduct = async (req, res) => {
-    const product = await prisma.product.findUnique({
+    //the reason we have to use findFirst for this combo, is because product is not indexed, which has the db convinced that there
+    //could be more than one item with this combo of queries. 
+    const product = await prisma.product.findFirst({
         where: {
-            id: req.params.id
+            id: req.params.id,
+            //when allowing users to query for things based on id, make sure it only shows things scoped to them if its meant to be 
+            //info specific to them. 
+            belongsToId: req.user.id
         }
     })
 
@@ -46,18 +51,18 @@ export const createProduct = async (req, res) => {
         }
     })
 
-    res.json(product)
+    res.json({message: `${product.name.slice(0, 1).toUpperCase() + product.name.slice(1)} added to ${req.user.name}'s products`})
 }
 
 export const alterProduct = async (req, res) => {
     const product = await prisma.product.update({
         where: {
-        
+            id: req.params.id
         }, 
         data: {
-
+            name: req.body.name
         }
     })
 
-    res.json(req)
+    res.json({data: product})
 }
