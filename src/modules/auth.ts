@@ -53,6 +53,7 @@ export const createJWT = (user) => {
     try{
         const user = jwt.verify(token, process.env.JWT_SECRET)
         req.user = user
+        console.log(user, bearer)
         next()
         return
     }catch(e){

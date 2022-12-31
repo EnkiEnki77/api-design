@@ -7,7 +7,10 @@
 //be more general. 
 
 import {Router} from 'express'
-import {body, validationResult} from 'express-validator'
+
+import {body, oneOf, validationResult} from 'express-validator'
+import { handleValidationErrors } from '../modules/middleware'
+import { alterProduct, createProduct, getProducts } from '../handlers/product'
 
 const router = Router()
 
@@ -26,41 +29,16 @@ const middleWare = (req, res, next) => {
 
 // Product
 
-//you can add middleware to specific  route
-router.get('/product', (req, res, next) => {
-    req.shh = 'secrettttt'
-    next()
-}, (req, res) => {
-    res.json({message: req.shh + ' ' + req.hello})
-})
+router.get('/product', getProducts)
 
 router.get('/product/:id', (req, res) => {})
 
 //the body middleware is saying req.body should have a property called name. Its enhancing the req object, so that when you 
-//pass it to validationResult it knows what validations to be checking for. 
-router.post('/product', body('name').isString(), (req, res) => {
-    const errors = validationResult(req)
+//pass it to validationResult it knows what validations to be checking for. Vallidations should only occur for data that the user
+//is required to send up. If a property has a default or a ? it is not required.
+router.post('/product', body('name').isString(), handleValidationErrors, createProduct)
 
-    if(!errors.isEmpty()){
-        res.status(400)
-        res.json({errors: errors.array()})
-        return
-    }
-
-    res.json({message: "product created."})
-})
-
-router.put('/product/:id', body('name').isString(), (req, res) => {
-    const errors = validationResult(req)
-
-    if(!errors.isEmpty()){
-        res.status(400)
-        res.json({errors: errors.array()})
-        return
-    }
-
-    res.json({message: "product updated."})
-})
+router.put('/product/:id', body('name').isString(), handleValidationErrors, alterProduct)
 
 router.delete('/product/:id', (req, res) => {})
 
@@ -70,9 +48,23 @@ router.get('/update', (req, res) => {})
 
 router.get('/update/:id', (req, res) => {})
 
-router.post('/update', (req, res) => {})
+router.post('/update', 
+    body('title').exists().isString(), 
+    body('body').exists().isString(),   
+    handleValidationErrors, 
+    (req, res) => {
+        res.json({message: "product updated."})
+})
 
-router.put('/update/:id', (req, res) => {})
+router.put('/update/:id', 
+    body('title').optional().isString(), 
+    body('body').optional().isString(), 
+    body('status').isIn(['IN_PROGRESS', 'DEPRECATED','SHIPPED']), 
+    body('version').optional().isString(), 
+    handleValidationErrors, 
+    (req, res) => {
+        res.json({message: "product updated."})
+})
 
 router.delete('/update/:id', (req, res) => {})
 
@@ -84,9 +76,16 @@ router.get('/updatepoint', (req, res) => {
 
 router.get('/updatepoint/:id', (req, res) => {})
 
-router.post('/updatepoint', (req, res) => {})
+router.post('/updatepoint', 
+    body('name').exists().isString(), 
+    body('description').exists().isString(), 
+    body('updateId').exists().isString(),
+    handleValidationErrors, (req, res) => {})
 
-router.put('/updatepoint/:id', (req, res) => {})
+router.put('/updatepoint/:id', 
+    body('name').optional().isString(), 
+    body('description').optional().isString(), 
+    handleValidationErrors, (req, res) => {})
 
 router.delete('/updatepoint/:id', (req, res) => {})
 
