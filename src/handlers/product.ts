@@ -28,6 +28,16 @@ export const getProducts = async (req, res) => {
     res.json({data: userProducts})
 }
 
+export const getOneProduct = async (req, res) => {
+    const product = await prisma.product.findUnique({
+        where: {
+            id: req.params.id
+        }
+    })
+
+    res.json({data: product})
+}
+
 export const createProduct = async (req, res) => {
     const product = await prisma.product.create({
         data: {

@@ -10,7 +10,7 @@ import {Router} from 'express'
 
 import {body, oneOf, validationResult} from 'express-validator'
 import { handleValidationErrors } from '../modules/middleware'
-import { alterProduct, createProduct, getProducts } from '../handlers/product'
+import { alterProduct, createProduct, getOneProduct, getProducts } from '../handlers/product'
 
 const router = Router()
 
@@ -31,7 +31,7 @@ const middleWare = (req, res, next) => {
 
 router.get('/product', getProducts)
 
-router.get('/product/:id', (req, res) => {})
+router.get('/product/:id', getOneProduct)
 
 //the body middleware is saying req.body should have a property called name. Its enhancing the req object, so that when you 
 //pass it to validationResult it knows what validations to be checking for. Vallidations should only occur for data that the user
