@@ -42,6 +42,7 @@ import morgan from 'morgan'
 import cors from 'cors'
 import { protect } from './modules/auth'
 import { createUser, signIn } from './handlers/user'
+import { handleRouteErrors } from './modules/middleware'
 
 const app = express()
 
@@ -81,6 +82,11 @@ const consoleLogger = (message) => (req, res, next) => {
 
 app.use(consoleLogger('console logger'))
 
+app.get('/', (req, res) => {
+    throw new Error('hello')
+})
+
+
 //attaches your router api branch back to app, none of the routes in the router will work unless /api is put first though, because
 //that is how the branch is configured in app.use in this instance. 
 //app.use allows you to add some sort of configuration either to the whole app, or to a specific api branch such as below. It is
@@ -88,5 +94,14 @@ app.use(consoleLogger('console logger'))
 app.use('/api', protect, productRouter)
 
 app.use(userRouter)
+
+app.use(handleRouteErrors)
+
+
+
+
+
+
+
 
 export default app

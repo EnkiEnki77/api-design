@@ -10,7 +10,7 @@ import {Router} from 'express'
 
 import {body, oneOf, validationResult} from 'express-validator'
 import { handleValidationErrors } from '../modules/middleware'
-import { alterProduct, createProduct, getOneProduct, getProducts } from '../handlers/product'
+import { alterProduct, createProduct, deleteProduct, getOneProduct, getProducts } from '../handlers/product'
 
 const router = Router()
 
@@ -40,7 +40,7 @@ router.post('/product', body('name').isString(), handleValidationErrors, createP
 
 router.put('/product/:id', body('name').isString(), handleValidationErrors, alterProduct)
 
-router.delete('/product/:id', (req, res) => {})
+router.delete('/product/:id', deleteProduct)
 
 // Update
 
@@ -66,7 +66,7 @@ router.put('/update/:id',
         res.json({message: "product updated."})
 })
 
-router.delete('/update/:id', (req, res) => {})
+router.delete('/update/:id', deleteProduct)
 
 // Update Point
 

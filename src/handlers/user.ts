@@ -11,8 +11,8 @@ import { comparePassword, createJWT, hashedPassword } from "../modules/auth";
 
 
 //all routes that query a db need to be asynce
-export const createUser = async (req, res) => {
-    const user = await prisma.user.create({
+export const createUser = async (req, res, next) => {
+    try{const user = await prisma.user.create({
         data: {
             username: req.body.username,
             password: await hashedPassword(req.body.password)
@@ -20,7 +20,11 @@ export const createUser = async (req, res) => {
     })
 
     const token = createJWT(user)
-    res.json({token})
+    res.json({token})}
+    catch(e){
+        // e.type = 'auth'
+        next(e)
+    }
 }
 
 

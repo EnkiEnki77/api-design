@@ -9,6 +9,9 @@
 //to run migrations any time you make changes to the schema. You need to install prisma/client which is the sdk for communicating to
 //the db. the command for migration is npx prisma migrate dev --name init
 
+//you may go to build your handlers and realize you need to update your schema, a tell tale sign of this is if you have to adjust
+//any querying outside prisma. 
+
 generator client {
   provider = "prisma-client-js"
 }
